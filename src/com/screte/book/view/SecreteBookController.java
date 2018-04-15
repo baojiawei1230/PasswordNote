@@ -1,7 +1,9 @@
 package com.screte.book.view;
 
 import com.screte.book.model.SecreteBook;
+import com.screte.book.model.SecreteBookWrapper;
 import com.screte.book.util.ResourceUtil;
+import com.screte.book.util.SecreteBookUtil;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -130,6 +132,10 @@ public class SecreteBookController {
     private void deleteSecreteBook(){
         int index = bookTableView.getSelectionModel().getSelectedIndex();
         bookTableView.getItems().remove(index);
+        SecreteBookWrapper secreteBookWrapper = new SecreteBookWrapper();
+        secreteBookWrapper.setBookList(bookTableView.getItems());
+        File file = SecreteBookUtil.loadInformationFromFile(null);
+        mainApp.saveSecreteBookDataToFile(file);
     }
 
     /**
@@ -176,10 +182,24 @@ public class SecreteBookController {
      */
     @FXML
     private void copyPassword(){
-        String text = this.passwordLabel.getText();
+        String password = this.passwordLabel.getText();
         Map<DataFormat,Object> contents = new HashMap<>();
-        contents.put(DataFormat.PLAIN_TEXT,text);
+        contents.put(DataFormat.PLAIN_TEXT,password);
         Clipboard systemClipboard = Clipboard.getSystemClipboard();
         systemClipboard.setContent(contents);
     }
+
+    /**
+     * 复制用户名
+     */
+    @FXML
+    private void copyUserName(){
+        String userName = this.userNameLabel.getText();
+        Map<DataFormat,Object> contents = new HashMap<>();
+        contents.put(DataFormat.PLAIN_TEXT,userName);
+        Clipboard systemClipboard = Clipboard.getSystemClipboard();
+        systemClipboard.setContent(contents);
+    }
+
+
 }

@@ -100,6 +100,7 @@
                      </children>
                   </HBox>
                   <Button layoutX="447.0" layoutY="216.0" mnemonicParsing="false" onAction="#copyPassword" prefHeight="27.0" prefWidth="45.0" text="复制" />
+                  <Button layoutX="445.0" layoutY="178.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="45.0" text="复制" onAction="#copyUserName"/>
                </children>
             </AnchorPane>
         </items>

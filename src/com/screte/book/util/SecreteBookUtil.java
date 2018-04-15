@@ -20,12 +20,17 @@ public class SecreteBookUtil {
      * @return
      * @throws FileNotFoundException
      */
-    public static File loadInformationFromFile(String location) throws FileNotFoundException {
+    public static File loadInformationFromFile(String location) {
         if(location == null){
             location = "/Users/Alex_Bao/Documents/GitWorkSpace/ScreteBook/out/production/ScreteBook/com/screte/book/file/password.xml";
         }
-        URL url = ResourceUtil.getURL(location);
-        return ResourceUtil.getFile(url);
+        try {
+            URL url = ResourceUtil.getURL(location);
+            return ResourceUtil.getFile(url);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

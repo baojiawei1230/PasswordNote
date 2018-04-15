@@ -2,10 +2,10 @@ package sample;
 
 import com.screte.book.model.SecreteBook;
 import com.screte.book.model.SecreteBookWrapper;
-import com.screte.book.util.ResourceUtil;
 import com.screte.book.util.SecreteBookUtil;
 import com.screte.book.view.SecreteBookController;
 import com.screte.book.view.SecreteBookEditController;
+import com.screte.book.view.SecreteBookMenuController;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,9 +20,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
+import java.util.Comparator;
 import java.util.prefs.Preferences;
 
 public final class Main extends Application {
@@ -41,6 +40,8 @@ public final class Main extends Application {
         initRootLayout();
         showSecreteOverView();
     }
+
+
 
 
     /**
@@ -66,7 +67,7 @@ public final class Main extends Application {
                 //load information from file
                 File file = SecreteBookUtil.loadInformationFromFile(null);
                 this.loadSecreteBookDataFromFile(file);
-            } catch (FileNotFoundException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             controller.setMainApp(this);
@@ -84,6 +85,7 @@ public final class Main extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("RootLayout.fxml"));
             rootLayout = (BorderPane) loader.load();
+            SecreteBookMenuController menuController = loader.getController();
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -188,7 +190,16 @@ public final class Main extends Application {
             SecreteBookWrapper wrapper = (SecreteBookWrapper) um.unmarshal(file);
 
             secreteBooks.clear();
-            secreteBooks.addAll(wrapper.getBookList());
+            if(wrapper.getBookList() != null && wrapper.getBookList().size() > 0){
+                secreteBooks.addAll(wrapper.getBookList());
+                //add sort measure
+                secreteBooks.sort(new Comparator<SecreteBook>() {
+                    @Override
+                    public int compare(SecreteBook firstBook, SecreteBook secondBook) {
+                        return firstBook.getSiteName().compareTo(secondBook.getSiteName());
+                    }
+                });
+            }
 
             // Save the file path to the registry.
             setSecreteBookFilePath(file);
@@ -223,6 +234,7 @@ public final class Main extends Application {
 
             // Save the file path to the registry.
             setSecreteBookFilePath(file);
+
         } catch (Exception e) { // catches ANY exception
 //            Dialogs.create().title("Error")
 //                    .masthead("Could not save data to file:\n" + file.getPath())
