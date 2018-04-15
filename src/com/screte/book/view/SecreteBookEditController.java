@@ -96,7 +96,7 @@ public class SecreteBookEditController {
 
     @FXML
     private void initialize(){
-        System.out.print("11111");
+        //initialize
     }
 
     /**

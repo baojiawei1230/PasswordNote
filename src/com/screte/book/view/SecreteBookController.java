@@ -1,6 +1,8 @@
 package com.screte.book.view;
 
 import com.screte.book.model.SecreteBook;
+import com.screte.book.util.ResourceUtil;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -9,6 +11,9 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
 import sample.Main;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,6 +82,11 @@ public class SecreteBookController {
         bookTableView.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> showSecreteDetails(newValue)));
     }
 
+    /**
+     * 设置mainApp
+     *
+     * @param mainApp
+     */
     public void setMainApp(Main mainApp){
         this.mainApp = mainApp;
         bookTableView.setItems(mainApp.getSecreteBooks());
@@ -95,10 +105,21 @@ public class SecreteBookController {
             userNameLabel.setText(secreteBook.getUserName());
             passwordLabel.setText(secreteBook.getPassword());
         }else{
+            //初始化属性
             siteNameLabel.setText("");
             siteAddressLabel.setText("");
             userNameLabel.setText("");
             passwordLabel.setText("");
+        }
+    }
+
+    /**
+     * 为column设置值
+     *
+     * @param secreteBooks
+     */
+    private void setColumnsPropertiesValue(ObservableList<SecreteBook> secreteBooks) {
+        if(secreteBooks != null && secreteBooks.size() > 0){
         }
     }
 
@@ -121,6 +142,14 @@ public class SecreteBookController {
         if(okClicked){
             //TODO 增加前是否需要判断已经存在.
             mainApp.getSecreteBooks().add(secreteBook);
+            //File filePath = mainApp.getSecreteBookFilePath();
+            try {
+                URL url = ResourceUtil.getURL("/Users/Alex_Bao/Documents/GitWorkSpace/ScreteBook/out/production/ScreteBook/com/screte/book/file/password.xml");
+                File file = ResourceUtil.getFile(url);
+                mainApp.saveSecreteBookDataToFile(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 

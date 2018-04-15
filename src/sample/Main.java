@@ -2,6 +2,8 @@ package sample;
 
 import com.screte.book.model.SecreteBook;
 import com.screte.book.model.SecreteBookWrapper;
+import com.screte.book.util.ResourceUtil;
+import com.screte.book.util.SecreteBookUtil;
 import com.screte.book.view.SecreteBookController;
 import com.screte.book.view.SecreteBookEditController;
 import javafx.application.Application;
@@ -18,7 +20,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.prefs.Preferences;
 
 public final class Main extends Application {
@@ -32,9 +36,6 @@ public final class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-//        primaryStage.setTitle("Hello World");
-//        primaryStage.setScene(new Scene(root, 300, 275));
-//        primaryStage.show();
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("简单密码本");
         initRootLayout();
@@ -61,11 +62,19 @@ public final class Main extends Application {
             AnchorPane pane = (AnchorPane) loader.load();
             rootLayout.setCenter(pane);
             SecreteBookController controller = loader.getController();
+            try {
+                //load information from file
+                File file = SecreteBookUtil.loadInformationFromFile(null);
+                this.loadSecreteBookDataFromFile(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
             controller.setMainApp(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     /**
      * 初始化布局
@@ -169,7 +178,7 @@ public final class Main extends Application {
      *
      * @param file
      */
-    public void loadPersonDataFromFile(File file) {
+    public void loadSecreteBookDataFromFile(File file) {
         try {
             JAXBContext context = JAXBContext
                     .newInstance(SecreteBookWrapper.class);
@@ -198,7 +207,7 @@ public final class Main extends Application {
      *
      * @param file
      */
-    public void savePersonDataToFile(File file) {
+    public void saveSecreteBookDataToFile(File file) {
         try {
             JAXBContext context = JAXBContext
                     .newInstance(SecreteBookWrapper.class);
