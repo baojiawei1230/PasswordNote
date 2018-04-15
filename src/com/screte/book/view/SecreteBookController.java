@@ -5,7 +5,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.DataFormat;
 import sample.Main;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SecreteBookController {
 
@@ -135,5 +140,17 @@ public class SecreteBookController {
             //TODO 打印错误日志.
             System.out.print("occurred error !!");
         }
+    }
+
+    /**
+     * 复制密码
+     */
+    @FXML
+    private void copyPassword(){
+        String text = this.passwordLabel.getText();
+        Map<DataFormat,Object> contents = new HashMap<>();
+        contents.put(DataFormat.PLAIN_TEXT,text);
+        Clipboard systemClipboard = Clipboard.getSystemClipboard();
+        systemClipboard.setContent(contents);
     }
 }
