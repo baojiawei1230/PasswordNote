@@ -127,7 +127,13 @@ public class SecreteBookEditController {
      * @return
      */
     public boolean isInputValid() {
-        //TODO
+        //TODO 增加提示框
+        if(this.userNameFiled.getText() == null || this.userNameFiled.getText().trim().length() == 0){
+            return false;
+        }
+        if(this.passwordFiled.getText() == null || this.passwordFiled.getText().trim().length() == 0){
+            return false;
+        }
         return true;
     }
 
