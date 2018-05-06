@@ -1,9 +1,10 @@
-package com.screte.book.view;
+package com.secrete.book.view;
 
-import com.screte.book.model.SecreteBook;
-import com.screte.book.model.SecreteBookWrapper;
-import com.screte.book.util.ResourceUtil;
-import com.screte.book.util.SecreteBookUtil;
+import com.secrete.book.function.CheckLoginUtil;
+import com.secrete.book.model.SecreteBook;
+import com.secrete.book.model.SecreteBookWrapper;
+import com.secrete.book.util.ResourceUtil;
+import com.secrete.book.util.SecreteBookUtil;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -11,7 +12,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
-import sample.Main;
+import sample.MainApplication;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -70,10 +71,29 @@ public class SecreteBookController {
     @FXML
     private Label siteAddressLabel;
 
-    private Main mainApp;
+    /**
+     * Main Application
+     */
+    private MainApplication mainApp;
+    /**
+     * ROOT PATH
+     */
+    private static final String USER_PATH = System.getProperty("user.home");
+    /**
+     * PASS NOTE PATH
+     */
+    private static final String PASS_NOTE_PATH = USER_PATH + "/PassNote/file";
+    /**
+     * FILE_PATH
+     */
+    private static final String FILE_PATH = PASS_NOTE_PATH + "/password.xml";
+
+
 
     @FXML
     private void initialize(){
+        //TODO 是否每次初始化都要确定是否登陆
+
         siteNameColumn.setCellValueFactory(cellDate -> cellDate.getValue().siteNameProperty());
         siteAddressColumn.setCellValueFactory(cellData -> cellData.getValue().siteAddressProperty());
 
@@ -89,8 +109,9 @@ public class SecreteBookController {
      *
      * @param mainApp
      */
-    public void setMainApp(Main mainApp){
+    public void setMainApp(MainApplication mainApp){
         this.mainApp = mainApp;
+        //set items
         bookTableView.setItems(mainApp.getSecreteBooks());
     }
 
@@ -100,19 +121,25 @@ public class SecreteBookController {
      * @param secreteBook
      */
     private void showSecreteDetails(SecreteBook secreteBook){
-        if(secreteBook != null){
-            //fill the labels with info from the person object.
-            siteNameLabel.setText(secreteBook.getSiteName());
-            siteAddressLabel.setText(secreteBook.getSiteAddress());
-            userNameLabel.setText(secreteBook.getUserName());
-            passwordLabel.setText(secreteBook.getPassword());
-        }else{
-            //初始化属性
-            siteNameLabel.setText("");
-            siteAddressLabel.setText("");
-            userNameLabel.setText("");
-            passwordLabel.setText("");
+        //check admin is login
+        if(CheckLoginUtil.checkIsLogin()){
+            if(secreteBook != null){
+                //fill the labels with info from the person object.
+                siteNameLabel.setText(secreteBook.getSiteName());
+                siteAddressLabel.setText(secreteBook.getSiteAddress());
+                userNameLabel.setText(secreteBook.getUserName());
+                passwordLabel.setText(secreteBook.getPassword());
+            }else{
+                //初始化属性
+                siteNameLabel.setText("");
+                siteAddressLabel.setText("");
+                userNameLabel.setText("");
+                passwordLabel.setText("");
+            }
+            return;
         }
+        // is not login.
+        this.mainApp.initHomePageView();
     }
 
     /**
@@ -134,8 +161,12 @@ public class SecreteBookController {
         bookTableView.getItems().remove(index);
         SecreteBookWrapper secreteBookWrapper = new SecreteBookWrapper();
         secreteBookWrapper.setBookList(bookTableView.getItems());
-        File file = SecreteBookUtil.loadInformationFromFile(null);
-        mainApp.saveSecreteBookDataToFile(file);
+        File file = SecreteBookUtil.loadInformationFromFile(PASS_NOTE_PATH);
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        File filePath = ResourceUtil.getFile(FILE_PATH);
+        mainApp.saveSecreteBookDataToFile(filePath);
     }
 
     /**
@@ -144,13 +175,13 @@ public class SecreteBookController {
     @FXML
     private void handlerNewSecreteBook(){
         SecreteBook secreteBook = new SecreteBook();
-        boolean okClicked = mainApp.showSecreteEditDialog(secreteBook);
+        boolean okClicked = mainApp.showNewPassNoteDialog(secreteBook);
         if(okClicked){
             //TODO 增加前是否需要判断已经存在.
             mainApp.getSecreteBooks().add(secreteBook);
             //File filePath = mainApp.getSecreteBookFilePath();
             try {
-                URL url = ResourceUtil.getURL("/Users/Alex_Bao/Documents/GitWorkSpace/ScreteBook/out/production/ScreteBook/com/screte/book/file/password.xml");
+                URL url = ResourceUtil.getURL(FILE_PATH);
                 File file = ResourceUtil.getFile(url);
                 mainApp.saveSecreteBookDataToFile(file);
             } catch (FileNotFoundException e) {

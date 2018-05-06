@@ -1,4 +1,4 @@
-package com.screte.book.util;
+package com.secrete.book.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -59,28 +59,33 @@ public class ResourceUtil {
      * @return
      * @throws FileNotFoundException
      */
-    public static File getFile(String resourceLocation) throws FileNotFoundException {
-        if (resourceLocation == null || resourceLocation.length() <= 0) {
-            System.out.println("resourceLocation must not be null");
-            return null;
-        }
-        if (resourceLocation.startsWith("classpath:")) {
-            String path = resourceLocation.substring("classpath:".length());
-            String description = "class path resource [" + path + "]";
-            ClassLoader cl = ResourceUtil.getDefaultClassLoader();
-            URL url = cl != null ? cl.getResource(path) : ClassLoader.getSystemResource(path);
-            if (url == null) {
-                throw new FileNotFoundException(description + " cannot be resolved to absolute file path " + "because it does not reside in the file system");
+    public static File getFile(String resourceLocation){
+        try{
+            if (resourceLocation == null || resourceLocation.length() <= 0) {
+                System.out.println("resourceLocation must not be null");
+                return null;
+            }
+            if (resourceLocation.startsWith("classpath:")) {
+                String path = resourceLocation.substring("classpath:".length());
+                String description = "class path resource [" + path + "]";
+                ClassLoader cl = ResourceUtil.getDefaultClassLoader();
+                URL url = cl != null ? cl.getResource(path) : ClassLoader.getSystemResource(path);
+                if (url == null) {
+                    throw new FileNotFoundException(description + " cannot be resolved to absolute file path " + "because it does not reside in the file system");
+                } else {
+                    return getFile(url, description);
+                }
             } else {
-                return getFile(url, description);
+                try {
+                    return getFile(new URL(resourceLocation));
+                } catch (MalformedURLException var5) {
+                    return new File(resourceLocation);
+                }
             }
-        } else {
-            try {
-                return getFile(new URL(resourceLocation));
-            } catch (MalformedURLException var5) {
-                return new File(resourceLocation);
-            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        return null;
     }
 
 

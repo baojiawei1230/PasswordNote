@@ -1,4 +1,4 @@
-package com.screte.book.model;
+package com.secrete.book.model;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

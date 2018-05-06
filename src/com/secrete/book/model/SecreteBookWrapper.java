@@ -1,4 +1,4 @@
-package com.screte.book.model;
+package com.secrete.book.model;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

@@ -1,11 +1,17 @@
 package sample;
 
-import com.screte.book.model.SecreteBook;
-import com.screte.book.model.SecreteBookWrapper;
-import com.screte.book.util.SecreteBookUtil;
-import com.screte.book.view.SecreteBookController;
-import com.screte.book.view.SecreteBookEditController;
-import com.screte.book.view.SecreteBookMenuController;
+import com.secrete.book.function.LoginListener;
+import com.secrete.book.function.UserLoginEvent;
+import com.secrete.book.model.SecreteBook;
+import com.secrete.book.model.SecreteBookWrapper;
+import com.secrete.book.model.UserInfo;
+import com.secrete.book.model.UserInfoWrapper;
+import com.secrete.book.util.ResourceUtil;
+import com.secrete.book.util.SecreteBookUtil;
+import com.secrete.book.view.CreateAdminController;
+import com.secrete.book.view.HomePageViewController;
+import com.secrete.book.view.SecreteBookController;
+import com.secrete.book.view.SecreteBookEditController;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,21 +19,51 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.prefs.Preferences;
 
-public final class Main extends Application {
+public final class MainApplication extends Application implements LoginListener<UserLoginEvent>{
 
+    /**
+     * stage
+     */
     private Stage primaryStage;
+    /**
+     * BorderPane
+     */
     private BorderPane rootLayout;
+    /**
+     * root path(users' home)
+     */
+    private static final String ROOT_PATH = System.getProperty("user.home");
+    /**
+     * pass note path
+     */
+    private static final String PASS_NOTE_PATH = ROOT_PATH + "/PassNote/file/";
+    /**
+     * user info path
+     */
+    private static final String USER_INFO_PATH = PASS_NOTE_PATH + "userInfo.xml";
+    /**
+     * pass note file
+     */
+    private static final File PASS_NOTE_FILE = ResourceUtil.getFile(PASS_NOTE_PATH);
+    /**
+     * user info file
+     */
+    private static final File USER_INFO_FILE = ResourceUtil.getFile(USER_INFO_PATH);
+
     /**
      * 绑定关联密码本集合.
      */
@@ -36,12 +72,36 @@ public final class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("简单密码本");
+        //set title
+        this.primaryStage.setTitle("PassNote");
+        //set resize false
+        this.primaryStage.setResizable(false);
+        // init layout
         initRootLayout();
-        showSecreteOverView();
+        //init press password
+        initHomePageView();
+        //init overview
+        //showSecreteOverView();
     }
 
 
+    /**
+     * init home page view to press password.
+     */
+    public void initHomePageView() {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("homePageView.fxml"));
+        try {
+            GridPane gridPane = loader.load();
+            rootLayout.setCenter(gridPane);
+            HomePageViewController homePageViewController = loader.getController();
+            homePageViewController.setMainApp(this);
+            //check username and password .
+            //homePageViewController.checkUserNameAndPassword();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     /**
@@ -56,7 +116,7 @@ public final class Main extends Application {
     /**
      * 视图
      */
-    private void showSecreteOverView() {
+    public void showSecreteOverView() {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("overView.fxml"));
@@ -85,7 +145,7 @@ public final class Main extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("RootLayout.fxml"));
             rootLayout = (BorderPane) loader.load();
-            SecreteBookMenuController menuController = loader.getController();
+            //SecreteBookMenuController menuController = loader.getController();
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -104,6 +164,7 @@ public final class Main extends Application {
         return primaryStage;
     }
 
+    //main method
     public static void main(String[] args) {
         launch(args);
     }
@@ -119,18 +180,19 @@ public final class Main extends Application {
             //load tht fxml file.
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("editSecreteBook.fxml"));
-            AnchorPane pane = (AnchorPane) loader.load();
+            AnchorPane pane = loader.load();
             //create a dialog stage
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("编辑密码信息");
+            dialogStage.setTitle("Edit Pass Note");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
+            dialogStage.setResizable(false);
             Scene scene = new Scene(pane);
             dialogStage.setScene(scene);
 
             //set the secrete book into the controller
             SecreteBookEditController editController = loader.getController();
-            editController.setDialogState(dialogStage);
+            editController.setDialogStage(dialogStage);
             editController.setSecreteBook(secreteBook);
             //show the dialog and waite until the user close it .
             dialogStage.showAndWait();
@@ -148,7 +210,7 @@ public final class Main extends Application {
      * @return
      */
     public File getSecreteBookFilePath(){
-        Preferences prefs = Preferences.userNodeForPackage(Main.class);
+        Preferences prefs = Preferences.userNodeForPackage(MainApplication.class);
         String filePath = prefs.get("filePath", null);
         if (filePath != null) {
             return new File(filePath);
@@ -162,7 +224,7 @@ public final class Main extends Application {
      * @param file
      */
     public void setSecreteBookFilePath(File file){
-        Preferences preferences = Preferences.userNodeForPackage(Main.class);
+        Preferences preferences = Preferences.userNodeForPackage(MainApplication.class);
         if(file != null){
             preferences.put("filePath",file.getPath());
         }else{
@@ -176,6 +238,7 @@ public final class Main extends Application {
 
     /**
      * 从文件中加载密码信息
+     *
      * loads secrete key form the specified file . the current secrete book data will be replaced.
      *
      * @param file
@@ -214,6 +277,56 @@ public final class Main extends Application {
     }
 
     /**
+     * load username and password from configuration file.
+     *
+     * @param file
+     */
+    public UserInfoWrapper loadUserNameAndPasswordFromFile(File file){
+        try {
+            if(!file.exists()){
+                return null;
+            }
+            JAXBContext context = JAXBContext.newInstance(UserInfoWrapper.class);
+            Unmarshaller um = context.createUnmarshaller();
+
+            // Reading XML from the file and unmarshalling.
+            UserInfoWrapper wrapper = (UserInfoWrapper) um.unmarshal(file);
+            return wrapper;
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     *
+     * create an user info from user input message.
+     *
+     * @param file
+     */
+    public void createUserNameAndPasswordFile(File file , UserInfo userInfo){
+        try {
+            if(file == null){
+                file = USER_INFO_FILE;
+            }
+            if(userInfo == null){
+                return;
+            }
+            JAXBContext context = JAXBContext.newInstance(UserInfoWrapper.class);
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,true);
+            UserInfoWrapper userInfoWrapper = new UserInfoWrapper();
+            userInfoWrapper.setUserInfo(userInfo);
+            FileWriter fileWriter = new FileWriter(file);
+            marshaller.marshal(userInfoWrapper,fileWriter);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * 保存密码信息到文件中
+     *
      * Saves the current person data to the specified file.
      *
      * @param file
@@ -242,4 +355,70 @@ public final class Main extends Application {
             e.printStackTrace();
         }
     }
+
+    /**
+     * new pass note record dialog
+     *
+     * @param secreteBook
+     */
+    public boolean showNewPassNoteDialog(SecreteBook secreteBook) {
+        try {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("newSecreteBook.fxml"));
+        AnchorPane pane = loader.load();
+        //create a dialog stage
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle("New Pass Note");
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        dialogStage.initOwner(primaryStage);
+        dialogStage.setResizable(false);
+        Scene scene = new Scene(pane);
+        dialogStage.setScene(scene);
+
+        //set the secrete book into the controller
+        SecreteBookEditController editController = loader.getController();
+        editController.setDialogStage(dialogStage);
+        editController.setSecreteBook(secreteBook);
+        //show the dialog and waite until the user close it .
+        dialogStage.showAndWait();
+        return editController.isOkClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * new admin dialog
+     *
+     * @return
+     */
+    public void showNewAdminDialog(){
+        try {
+            FXMLLoader loader  = new FXMLLoader();
+            loader.setLocation(getClass().getResource("createAdminDialog.fxml"));
+            AnchorPane pane = loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Create Admin");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(pane);
+            dialogStage.setScene(scene);
+            dialogStage.setResizable(false);
+            CreateAdminController adminController = loader.getController();
+            adminController.setMainApplication(this);
+            adminController.setDialogStage(dialogStage);
+            dialogStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public boolean onLoginEvent(UserLoginEvent loginEvent) {
+        return false;
+    }
+
+
 }

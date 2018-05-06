@@ -1,4 +1,4 @@
-package com.screte.book.util;
+package com.secrete.book.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,6 +14,18 @@ import java.net.URL;
 public class SecreteBookUtil {
 
     /**
+     * ROOT PATH
+     */
+    private static final String ROOT_PATH = System.getProperty("user.home");
+    /**
+     * PASS_NOT
+     */
+    private static final String PASS_NOTE_PATH = ROOT_PATH + "/PassNote/file";
+    /**
+     * FILE_PATH
+     */
+    private static final String FILE_PATH = PASS_NOTE_PATH + "/password.xml";
+    /**
      * load information from file
      *
      * @param location
@@ -22,7 +34,7 @@ public class SecreteBookUtil {
      */
     public static File loadInformationFromFile(String location) {
         if(location == null){
-            location = "/Users/Alex_Bao/Documents/GitWorkSpace/ScreteBook/out/production/ScreteBook/com/screte/book/file/password.xml";
+            location = FILE_PATH;
         }
         try {
             URL url = ResourceUtil.getURL(location);

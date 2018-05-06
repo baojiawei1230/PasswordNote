@@ -1,6 +1,6 @@
-package com.screte.book.view;
+package com.secrete.book.view;
 
-import com.screte.book.model.SecreteBook;
+import com.secrete.book.model.SecreteBook;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 

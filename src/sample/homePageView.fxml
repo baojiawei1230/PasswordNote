@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<GridPane alignment="center" hgap="10" prefHeight="342.0" prefWidth="328.0" styleClass="root" vgap="10" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secrete.book.view.HomePageViewController">
+    <padding>
+        <Insets bottom="10" left="25" right="25" top="25" />
+    </padding>
+
+    <!-- 窗体标题 -->
+    <Text text="               PASS  NOTE" wrappingWidth="243.81884765625" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0">
+      <font>
+         <Font size="17.0" />
+      </font></Text>
+
+    <!-- 用户名标签 -->
+    <Label styleClass="label" text="User Name:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+    <!-- 用户名输入框 -->
+    <TextField fx:id="userNameField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+    <!-- 密码标签 -->
+    <Label styleClass="label" text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+    <!-- 密码输入框 -->
+    <PasswordField fx:id="passwordField" onKeyPressed="#listenPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+    <!-- 登陆按钮 使用hbox布局面板 以及添加事件 -->
+    <HBox alignment="bottom_right" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="4">
+        <Button onAction="#checkUserNameAndPassword" styleClass="button" text="Sign In" />
+    </HBox>
+    <!-- 文本提示 -->
+    <Label fx:id="warnMessage" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+
+    <!-- 引入css文件 -->
+    <stylesheets>
+        <URL value="@homePageView.css" />
+    </stylesheets>
+
+</GridPane>

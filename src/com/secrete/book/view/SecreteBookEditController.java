@@ -1,6 +1,6 @@
-package com.screte.book.view;
+package com.secrete.book.view;
 
-import com.screte.book.model.SecreteBook;
+import com.secrete.book.model.SecreteBook;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -41,8 +41,11 @@ public class SecreteBookEditController {
     /**
      * dialog
      */
-    private Stage dialogState;
+    private Stage dialogStage;
 
+    /**
+     * is clicked ok.
+     */
     private boolean isOkClicked = false;
 
     public TextField getSiteNameFiled() {
@@ -90,8 +93,8 @@ public class SecreteBookEditController {
         this.passwordFiled.setText(secreteBook.getPassword());
     }
 
-    public void setDialogState(Stage dialogState) {
-        this.dialogState = dialogState;
+    public void setDialogStage(Stage dialogStage) {
+        this.dialogStage = dialogStage;
     }
 
     @FXML
@@ -117,7 +120,7 @@ public class SecreteBookEditController {
             secreteBook.setSiteName(siteNameFiled.getText());
             secreteBook.setSiteAddress(siteAddressFiled.getText());
             this.isOkClicked = true;
-            dialogState.close();
+            dialogStage.close();
         }
     }
 
@@ -139,6 +142,6 @@ public class SecreteBookEditController {
 
     @FXML
     private void handlerCancel(){
-        dialogState.close();
+        dialogStage.close();
     }
 }
