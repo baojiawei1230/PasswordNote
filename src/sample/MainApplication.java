@@ -17,6 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -74,6 +75,8 @@ public final class MainApplication extends Application implements LoginListener<
         this.primaryStage = primaryStage;
         //set title
         this.primaryStage.setTitle("PassNote");
+        //设置主图标
+        this.primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("/sample/PassNote.icns")));
         //set resize false
         this.primaryStage.setResizable(false);
         // init layout
