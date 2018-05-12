@@ -1,10 +1,14 @@
 package com.secrete.book.util;
 
+import com.secrete.book.model.SecreteBook;
+import javafx.collections.ObservableList;
+import sample.MainApplication;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
+import java.io.File;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -17,6 +21,19 @@ import java.security.SecureRandom;
  * create by IntelliJ IDEA
  */
 public class DESUtil {
+
+    /**
+     * ROOT PATH
+     */
+    private static final String ROOT_PATH = System.getProperty("user.home");
+    /**
+     * PASS_NOT
+     */
+    private static final String PASS_NOTE_PATH = ROOT_PATH + "/PassNote/file";
+    /**
+     * FILE_PATH
+     */
+    private static final String FILE_PATH = PASS_NOTE_PATH + "/password.xml";
 
     private static Key key;
     private static String KEY_STR = "PASS_NOTE";
@@ -87,6 +104,15 @@ public class DESUtil {
         System.out.println("encryptString "+encryptString);
         String encrypt = DESUtil.getDecryptString(encryptString);
         System.out.println("encrypt : "+encrypt);
+
+//        MainApplication mainApplication = new MainApplication();
+//        ObservableList<SecreteBook> secreteBooks = mainApplication.loadSecreteBookDataFromFile(new File(FILE_PATH));
+//        if(secreteBooks != null && secreteBooks.size() > 0){
+//            for(SecreteBook book : secreteBooks){
+//                System.out.println("password :"+book.getPassword());
+//                System.out.println("encrypt password : "+DESUtil.getEncryptString(book.getPassword()));
+//            }
+//        }
     }
 
 }

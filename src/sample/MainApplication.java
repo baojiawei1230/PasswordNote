@@ -99,8 +99,6 @@ public final class MainApplication extends Application implements LoginListener<
             rootLayout.setCenter(gridPane);
             HomePageViewController homePageViewController = loader.getController();
             homePageViewController.setMainApp(this);
-            //check username and password .
-            //homePageViewController.checkUserNameAndPassword();
         } catch (IOException e) {
             e.printStackTrace();
         }

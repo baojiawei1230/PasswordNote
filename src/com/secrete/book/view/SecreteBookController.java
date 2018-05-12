@@ -3,6 +3,7 @@ package com.secrete.book.view;
 import com.secrete.book.function.CheckLoginUtil;
 import com.secrete.book.model.SecreteBook;
 import com.secrete.book.model.SecreteBookWrapper;
+import com.secrete.book.util.DESUtil;
 import com.secrete.book.util.ResourceUtil;
 import com.secrete.book.util.SecreteBookUtil;
 import javafx.collections.ObservableList;
@@ -128,7 +129,7 @@ public class SecreteBookController {
                 siteNameLabel.setText(secreteBook.getSiteName());
                 siteAddressLabel.setText(secreteBook.getSiteAddress());
                 userNameLabel.setText(secreteBook.getUserName());
-                passwordLabel.setText(secreteBook.getPassword());
+                passwordLabel.setText(DESUtil.getDecryptString(secreteBook.getPassword()));
             }else{
                 //初始化属性
                 siteNameLabel.setText("");

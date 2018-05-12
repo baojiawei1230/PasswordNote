@@ -1,6 +1,7 @@
 package com.secrete.book.view;
 
 import com.secrete.book.model.SecreteBook;
+import com.secrete.book.util.DESUtil;
 import com.secrete.book.util.PasswordGenerator;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -120,7 +121,7 @@ public class SecreteBookEditController {
         //校验
         if(isInputValid()){
             secreteBook.setUserName(userNameFiled.getText());
-            secreteBook.setPassword(passwordFiled.getText());
+            secreteBook.setPassword(DESUtil.getEncryptString(passwordFiled.getText()));
             secreteBook.setSiteName(siteNameFiled.getText());
             secreteBook.setSiteAddress(siteAddressFiled.getText());
             this.isOkClicked = true;

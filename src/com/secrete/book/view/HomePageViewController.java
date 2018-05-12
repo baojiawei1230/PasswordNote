@@ -14,7 +14,6 @@ import javafx.scene.input.KeyEvent;
 import sample.MainApplication;
 
 import java.io.File;
-import java.net.URL;
 
 /**
  * home page view controller
