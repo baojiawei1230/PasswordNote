@@ -3,6 +3,7 @@ package com.secrete.book.view;
 import com.secrete.book.function.UserLoginContext;
 import com.secrete.book.model.UserInfo;
 import com.secrete.book.model.UserInfoWrapper;
+import com.secrete.book.util.DESUtil;
 import com.secrete.book.util.ResourceUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -115,25 +116,14 @@ public class HomePageViewController{
      *
      */
     private boolean checkAdmin(TextField userNameField, PasswordField passwordField) {
-        URL url = null;
         try {
-            //url = ResourceUtil.getURL(PASS_NOTE_PATH);
             if (!PASS_NOTE_FILE.exists()) {
                 PASS_NOTE_FILE.mkdirs();
-                //mainApp.createUserNameAndPasswordFile(infoFile,);
                 mainApp.showNewAdminDialog();
                 this.warnMessage.setText("该用户不存在,请重新输入");
                 return false;
             }
-//            if(!file.exists()){
-//                //TODO 弹出未设置Admin信息,然后进行设置.
-//                //this.warnMessage = new Label("请先设置Admin账户 !");
-//                mainApp.createUserNameAndPasswordFile(file);
-//                return false;
-//            }
             UserInfoWrapper userInfoWrapper = mainApp.loadUserNameAndPasswordFromFile(USER_INFO_FILE);
-            //UserLoginSource userLoginSource = new UserLoginSource();
-            //userLoginSource.triggerNotifiers();
             if(userInfoWrapper == null || (userInfoWrapper.getUserInfo().getUserName() == null && userInfoWrapper.getUserInfo().getPassword() == null)){
                 //TODO 账户为空,没有设置.跳出设置用户密码界面
                 this.warnMessage.setText("该用户不存在,请重新输入!");
@@ -141,17 +131,28 @@ public class HomePageViewController{
                 return false;
             }
             UserInfo userInfo = userInfoWrapper.getUserInfo();
-            //validate message
-            if(userInfo.getUserName().equals(userNameField.getText()) && userInfo.getPassword().equals(passwordField.getText())){
-                //set into UserLoginContext.
-                UserLoginContext.setUserInfo(userInfo);
-                return true;
-            }
-          //  warnMessage.labelForProperty().addListener(((observable, oldValue, newValue) -> showNewValue(newValue)));
-            //this.mainApp.getPrimaryStage().show();
+            if (validateLoginInfo(userNameField, passwordField, userInfo)) return true;
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * validate login info
+     *
+     * @param userNameField
+     * @param passwordField
+     * @param userInfo
+     * @return
+     */
+    private boolean validateLoginInfo(TextField userNameField, PasswordField passwordField, UserInfo userInfo) {
+        //validate message
+        if(userInfo.getUserName().equals(userNameField.getText()) && DESUtil.getDecryptString(userInfo.getPassword()).equals(passwordField.getText())){
+            //set into UserLoginContext.
+            UserLoginContext.setUserInfo(userInfo);
+            return true;
         }
         return false;
     }

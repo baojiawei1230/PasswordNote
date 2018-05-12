@@ -1,6 +1,7 @@
 package com.secrete.book.view;
 
 import com.secrete.book.model.SecreteBook;
+import com.secrete.book.util.PasswordGenerator;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -111,6 +112,9 @@ public class SecreteBookEditController {
         return this.isOkClicked;
     }
 
+    /**
+     * handler ok button
+     */
     @FXML
     private void handlerOK(){
         //校验
@@ -140,8 +144,24 @@ public class SecreteBookEditController {
         return true;
     }
 
+    /**
+     * handler cancel button
+     */
     @FXML
     private void handlerCancel(){
         dialogStage.close();
     }
+
+    /**
+     * handler generate password button
+     */
+    @FXML
+    private void generatePassword(){
+        //generate password.
+        String password = PasswordGenerator.generateComplexPassword();
+        //show in field.
+        passwordFiled.setText(password);
+    }
+
+
 }

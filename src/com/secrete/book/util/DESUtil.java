@@ -19,7 +19,7 @@ import java.security.SecureRandom;
 public class DESUtil {
 
     private static Key key;
-    private static String KEY_STR = "MY_KEY";
+    private static String KEY_STR = "PASS_NOTE";
     private static String INSTANCE_KEY = "DES";
 
     /** 初始化 **/
@@ -85,8 +85,6 @@ public class DESUtil {
         String str = "baojiawei";
         String encryptString = DESUtil.getEncryptString(str);
         System.out.println("encryptString "+encryptString);
-        String baojiawei = DESUtil.getDecryptString(str);
-        System.out.println("baojiawei : "+baojiawei);
         String encrypt = DESUtil.getDecryptString(encryptString);
         System.out.println("encrypt : "+encrypt);
     }

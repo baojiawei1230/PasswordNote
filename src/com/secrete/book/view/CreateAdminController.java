@@ -1,6 +1,7 @@
 package com.secrete.book.view;
 
 import com.secrete.book.model.UserInfo;
+import com.secrete.book.util.DESUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -57,15 +58,16 @@ public class CreateAdminController {
 
     @FXML
     private void handlerOK(){
-        //校验
+        //validation
         if(checkConfirmPassword()){
             if(userInfo == null){
                 userInfo = new UserInfo();
             }
-            //设置信息.
+            //set info.
             UserInfo userInfo = new UserInfo();
             userInfo.setUserName(userNameField.getText());
-            userInfo.setPassword(passwordField.getText());
+            userInfo.setPassword(DESUtil.getEncryptString(passwordField.getText()));
+            //create user
             mainApplication.createUserNameAndPasswordFile(null,userInfo);
             this.isOkClicked = true;
             dialogStage.close();

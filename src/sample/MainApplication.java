@@ -259,15 +259,10 @@ public final class MainApplication extends Application implements LoginListener<
             if(wrapper.getBookList() != null && wrapper.getBookList().size() > 0){
                 secreteBooks.addAll(wrapper.getBookList());
                 //add sort measure
-                secreteBooks.sort(new Comparator<SecreteBook>() {
-                    @Override
-                    public int compare(SecreteBook firstBook, SecreteBook secondBook) {
-                        return firstBook.getSiteName().compareTo(secondBook.getSiteName());
-                    }
-                });
+                secreteBooks.sort(Comparator.comparing(SecreteBook::getSiteName));
             }
 
-            // Save the file path to the registry.
+            /* Save the file path to the registry. */
             setSecreteBookFilePath(file);
 
         } catch (Exception e) { // catches ANY exception

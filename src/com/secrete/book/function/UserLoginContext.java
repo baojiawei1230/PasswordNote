@@ -12,6 +12,11 @@ import com.secrete.book.model.UserInfo;
 public class UserLoginContext {
 
     /**
+     * live time for need to be input password
+     */
+    private static final long LIVE_TIME = 1 * 60 * 1000;
+
+    /**
      * user info context
      */
     public static final ThreadLocal<UserInfo> userInfoContext = new ThreadLocal<>();
@@ -19,15 +24,12 @@ public class UserLoginContext {
     /**
      * start time context
      */
-    private static final ThreadLocal<Long> startTimeContext  = new ThreadLocal<Long>(){
-        @Override
-        protected Long initialValue() {
-            return System.currentTimeMillis();
-        }
-    };
+    private static final ThreadLocal<Long> startTimeContext  = ThreadLocal.withInitial(() -> System.currentTimeMillis());
 
-    private UserLoginContext() {
-    }
+    /**
+     * private constructor
+     */
+    private UserLoginContext() { }
 
     /**
      * set start time
@@ -57,7 +59,7 @@ public class UserLoginContext {
     public static UserInfo getUserInfo(){
         long gapTime = System.currentTimeMillis() - startTimeContext.get();
         System.out.println(gapTime);
-        if(userInfoContext.get() == null || (System.currentTimeMillis() - startTimeContext.get() > 1 * 30 * 1000)){
+        if(userInfoContext.get() == null || (System.currentTimeMillis() - startTimeContext.get() > LIVE_TIME)){
             return null;
         }
         return userInfoContext.get();
