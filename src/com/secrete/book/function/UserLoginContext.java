@@ -9,7 +9,7 @@ import com.secrete.book.model.UserInfo;
  * @create 2018-05-05
  * create by IntelliJ IDEA
  */
-public class UserLoginContext {
+public final class UserLoginContext {
 
     /**
      * live time for need to be input password
@@ -57,8 +57,8 @@ public class UserLoginContext {
      * @return
      */
     public static UserInfo getUserInfo(){
-        long gapTime = System.currentTimeMillis() - startTimeContext.get();
-        System.out.println(gapTime);
+        //long gapTime = System.currentTimeMillis() - startTimeContext.get();
+        //System.out.println(gapTime);
         if(userInfoContext.get() == null || (System.currentTimeMillis() - startTimeContext.get() > LIVE_TIME)){
             return null;
         }

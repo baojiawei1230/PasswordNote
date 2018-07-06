@@ -244,7 +244,7 @@ public final class MainApplication extends Application implements LoginListener<
      *
      * @param file
      */
-    public void loadSecreteBookDataFromFile(File file) {
+    public ObservableList<SecreteBook> loadSecreteBookDataFromFile(File file) {
         try {
             JAXBContext context = JAXBContext
                     .newInstance(SecreteBookWrapper.class);
@@ -259,9 +259,9 @@ public final class MainApplication extends Application implements LoginListener<
                 //add sort measure
                 secreteBooks.sort(Comparator.comparing(SecreteBook::getSiteName));
             }
-
+            return secreteBooks;
             /* Save the file path to the registry. */
-            setSecreteBookFilePath(file);
+            //setSecreteBookFilePath(file);
 
         } catch (Exception e) { // catches ANY exception
 //            Dialogs.create()
@@ -270,6 +270,7 @@ public final class MainApplication extends Application implements LoginListener<
 //                    .showException(e);
             e.printStackTrace();
         }
+        return null;
     }
 
     /**

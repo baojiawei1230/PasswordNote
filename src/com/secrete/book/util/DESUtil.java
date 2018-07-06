@@ -6,12 +6,8 @@ import sample.MainApplication;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import java.io.File;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 /**
  * DES加密工具类
@@ -21,6 +17,11 @@ import java.security.SecureRandom;
  * create by IntelliJ IDEA
  */
 public class DESUtil {
+
+    /**
+     * can not construct.
+     */
+    private DESUtil() {}
 
     /**
      * ROOT PATH
@@ -35,21 +36,52 @@ public class DESUtil {
      */
     private static final String FILE_PATH = PASS_NOTE_PATH + "/password.xml";
 
-    private static Key key;
-    private static String KEY_STR = "PASS_NOTE";
-    private static String INSTANCE_KEY = "DES";
+    /**
+     * prefix index
+     */
+    private static final String PREFIX_INDEX = "PREFIX_INDEX";
 
-    /** 初始化 **/
-    static{
-        try {
-            KeyGenerator generator = KeyGenerator.getInstance("DES");
-            generator.init(new SecureRandom(KEY_STR.getBytes()));
-            key = generator.generateKey();
-            generator = null;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+    /**
+     *  suffix index
+     */
+    private static final String SUFFIX_INDEX = "SUFFIX_INDEX";
+
+    /**
+     * index length
+     */
+    private static final int INDEX_LENGTH = PREFIX_INDEX.length();
+
+
+    /**
+     * before encrypt
+     *
+     * @return
+     */
+    private static String beforeEncrypt(String code){
+        if(code == null || "".equals(code.trim())){
+            return null;
         }
+        String enCode = PREFIX_INDEX + code + SUFFIX_INDEX;
+        return enCode;
     }
+
+    /**
+     * after decrypt
+     *
+     * @param code
+     * @return
+     */
+    private static String afterDecrypt(String code){
+        if(code == null || "".equals(code.trim())){
+            return null;
+        }
+        if(code.length() <= 2 * INDEX_LENGTH){
+            return null;
+        }
+        String deCode = code.substring(INDEX_LENGTH).substring(0 , code.substring(INDEX_LENGTH).length() - INDEX_LENGTH);
+        return deCode;
+    }
+
 
     /**
      * 字符串加密
@@ -63,11 +95,9 @@ public class DESUtil {
     public static String getEncryptString(String str){
         BASE64Encoder base64Encoder = new BASE64Encoder();
         try {
+            str = beforeEncrypt(str);
             byte[] strBytes = str.getBytes();
-            Cipher cipher = Cipher.getInstance(INSTANCE_KEY);
-            cipher.init(Cipher.ENCRYPT_MODE,key);
-            byte[] encryptStrBytes = cipher.doFinal(strBytes);
-            return base64Encoder.encode(encryptStrBytes);
+            return base64Encoder.encode(strBytes);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -87,10 +117,8 @@ public class DESUtil {
         BASE64Decoder base64Decoder = new BASE64Decoder();
         try{
             byte[] strBytes = base64Decoder.decodeBuffer(str);
-            Cipher cipher = Cipher.getInstance(INSTANCE_KEY);
-            cipher.init(Cipher.DECRYPT_MODE,key);
-            byte[] decriptStrBytes = cipher.doFinal(strBytes);
-            return new String(decriptStrBytes,"UTF8");
+            String deCode = new String(strBytes, "UTF8");
+            return afterDecrypt(deCode);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -99,20 +127,21 @@ public class DESUtil {
 
     /** 测试main类 **/
     public static void main(String[] args){
-        String str = "baojiawei";
-        String encryptString = DESUtil.getEncryptString(str);
-        System.out.println("encryptString "+encryptString);
-        String encrypt = DESUtil.getDecryptString(encryptString);
-        System.out.println("encrypt : "+encrypt);
+//        String str = "baojiawei";
+//        String encryptString = DESUtil.getEncryptString(str);
+//        System.out.println("encryptString "+encryptString);
+//        String encrypt = DESUtil.getDecryptString(encryptString);
+//        System.out.println("encrypt : "+encrypt);
 
-//        MainApplication mainApplication = new MainApplication();
-//        ObservableList<SecreteBook> secreteBooks = mainApplication.loadSecreteBookDataFromFile(new File(FILE_PATH));
-//        if(secreteBooks != null && secreteBooks.size() > 0){
-//            for(SecreteBook book : secreteBooks){
-//                System.out.println("password :"+book.getPassword());
-//                System.out.println("encrypt password : "+DESUtil.getEncryptString(book.getPassword()));
-//            }
-//        }
+        MainApplication mainApplication = new MainApplication();
+        ObservableList<SecreteBook> secreteBooks = mainApplication.loadSecreteBookDataFromFile(new File(FILE_PATH));
+        if(secreteBooks != null && secreteBooks.size() > 0){
+            for(SecreteBook book : secreteBooks){
+                System.out.println("password :"+book.getPassword());
+                System.out.println("encrypt password : "+DESUtil.getEncryptString(book.getPassword()));
+                //System.out.println("decrypt password : "+DESUtil.getDecryptString(book.getPassword()));
+            }
+        }
     }
 
 }
